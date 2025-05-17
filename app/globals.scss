@@ -852,8 +852,6 @@ a {
       left: 0;
       right: 0;
       bottom: 0;
-      background-image: url('/placeholder.svg?height=400&width=800&query=jungle background with trees and vines silhouettes');
-      background-size: cover;
       opacity: 0.3;
       z-index: 1;
     }
@@ -1523,8 +1521,6 @@ a {
     position: relative;
     overflow: hidden;
     margin-bottom: 1rem;
-    background-image: url('/placeholder.svg?height=400&width=800&query=jungle background with trees and vines');
-    background-size: cover;
     
     @media (max-width: 768px) {
       height: 350px;
@@ -1980,7 +1976,6 @@ main {
     }
     
     &--spinning {
-      background-image: url('/symbols/spinning-reel.png');
       background-size: 100% auto;
       animation: spin 0.5s steps(10) infinite;
       
