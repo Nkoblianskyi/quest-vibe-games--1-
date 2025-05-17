@@ -97,7 +97,7 @@ export default function RootLayout({
                 </span>
               </p>
               <p>
-                <span itemProp="email">info@questvibegames.com</span> |<span itemProp="telephone">+47 911 234 567</span>
+                <span itemProp="email">info@questvibegames.com</span> |<span itemProp="telephone">+47 911 934 548</span>
               </p>
             </div>
             <div
