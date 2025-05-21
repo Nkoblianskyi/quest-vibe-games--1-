@@ -29,17 +29,6 @@ export function Header() {
           <ul className="header__nav-list" role="menu">
             <li className="header__nav-item" role="none">
               <Link
-                href="/spill"
-                className="header__nav-link"
-                role="menuitem"
-                aria-label="Spill"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Spill
-              </Link>
-            </li>
-            <li className="header__nav-item" role="none">
-              <Link
                 href="/vilkar"
                 className="header__nav-link"
                 role="menuitem"
