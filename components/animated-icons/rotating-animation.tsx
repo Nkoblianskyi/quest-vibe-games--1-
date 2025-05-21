@@ -2,11 +2,11 @@
 
 import { useEffect, useRef } from "react"
 
-interface SpinningAnimationProps {
+interface RotatingAnimationProps {
   size?: number
 }
 
-export function SpinningAnimation({ size = 80 }: SpinningAnimationProps) {
+export function RotatingAnimation({ size = 80 }: RotatingAnimationProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export function SpinningAnimation({ size = 80 }: SpinningAnimationProps) {
     const draw = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-      // Draw spinning symbols
+      // Draw rotating symbols
       for (let i = 0; i < 10; i++) {
         const y = ((i * size) / 3 + position) % (size * 3)
         const symbolIndex = Math.floor((i + Math.floor(position / 20)) % symbols.length)

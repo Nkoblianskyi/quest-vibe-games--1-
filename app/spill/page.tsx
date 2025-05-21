@@ -7,7 +7,7 @@ import { BananaIcon } from "@/components/animated-icons/banana-icon"
 import { ParrotIcon } from "@/components/animated-icons/parrot-icon"
 import { CoconutIcon } from "@/components/animated-icons/coconut-icon"
 import { StarIcon } from "@/components/animated-icons/star-icon"
-import { SpinningAnimation } from "@/components/animated-icons/spinning-animation"
+import { RotatingAnimation } from "@/components/animated-icons/rotating-animation"
 
 // Game symbols
 const symbols = [
@@ -22,15 +22,15 @@ export default function GamePage() {
   const [score, setScore] = useState(5000)
   const [energy, setEnergy] = useState(50)
   const [grid, setGrid] = useState<string[][]>([])
-  const [spinning, setSpinning] = useState(false)
+  const [rotating, setRotating] = useState(false)
   const [matches, setMatches] = useState<{ symbol: string; count: number; multiplier: number; points: number }[]>([])
   const [totalPoints, setTotalPoints] = useState(0)
-  const [spinningColumns, setSpinningColumns] = useState<boolean[]>([false, false, false, false, false])
+  const [rotatingColumns, setRotatingColumns] = useState<boolean[]>([false, false, false, false, false])
   const [revealedGrid, setRevealedGrid] = useState<string[][]>([])
 
   // Animation timing references
-  const spinDurations = [1000, 1400, 1800, 2200, 2600] // Different durations for each column
-  const spinTimers = useRef<NodeJS.Timeout[]>([])
+  const animationDurations = [1000, 1400, 1800, 2200, 2600] // Different durations for each column
+  const animationTimers = useRef<NodeJS.Timeout[]>([])
 
   // Initialize grid
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function GamePage() {
 
     // Cleanup timers on unmount
     return () => {
-      spinTimers.current.forEach((timer) => clearTimeout(timer))
+      animationTimers.current.forEach((timer) => clearTimeout(timer))
     }
   }, [])
 
@@ -59,29 +59,29 @@ export default function GamePage() {
     return newGrid
   }
 
-  const spin = () => {
-    if (spinning || score < energy) return
+  const play = () => {
+    if (rotating || score < energy) return
 
     // Clear any existing timers
-    spinTimers.current.forEach((timer) => clearTimeout(timer))
-    spinTimers.current = []
+    animationTimers.current.forEach((timer) => clearTimeout(timer))
+    animationTimers.current = []
 
-    setSpinning(true)
+    setRotating(true)
     setMatches([])
     setTotalPoints(0)
     setScore((prev) => prev - energy)
 
-    // Set all columns to spinning state
-    setSpinningColumns([true, true, true, true, true])
+    // Set all columns to rotating state
+    setRotatingColumns([true, true, true, true, true])
 
     // Generate new grid but don't show it yet
     const newGrid = generateGrid()
     setGrid(newGrid)
 
     // Stop columns one by one with delays
-    spinDurations.forEach((duration, colIndex) => {
+    animationDurations.forEach((duration, colIndex) => {
       const timer = setTimeout(() => {
-        setSpinningColumns((prev) => {
+        setRotatingColumns((prev) => {
           const updated = [...prev]
           updated[colIndex] = false
           return updated
@@ -97,15 +97,15 @@ export default function GamePage() {
         })
 
         // When last column stops, calculate matches
-        if (colIndex === spinDurations.length - 1) {
+        if (colIndex === animationDurations.length - 1) {
           setTimeout(() => {
             calculateMatches(newGrid)
-            setSpinning(false)
+            setRotating(false)
           }, 500) // Small delay after last column stops
         }
       }, duration)
 
-      spinTimers.current.push(timer)
+      animationTimers.current.push(timer)
     })
   }
 
@@ -165,19 +165,12 @@ export default function GamePage() {
 
     const IconComponent = symbolData.component
     return (
-      <IconComponent size={size} isAnimated={!spinning && isMatching} className={isMatching ? "matching-symbol" : ""} />
+      <IconComponent size={size} isAnimated={!rotating && isMatching} className={isMatching ? "matching-symbol" : ""} />
     )
   }
 
   return (
     <main className="game-page" itemScope itemType="https://schema.org/SoftwareApplication">
-      <meta itemProp="applicationCategory" content="Game" />
-      <meta itemProp="operatingSystem" content="Web Browser" />
-      <meta itemProp="name" content="QuestVibe Games - Sosial Spillplattform" />
-      <meta itemProp="offers" itemScope itemType="https://schema.org/Offer" />
-      <meta itemProp="price" content="0" />
-      <meta itemProp="priceCurrency" content="NOK" />
-
       <div
         className="game-page__warning"
         role="alert"
@@ -199,29 +192,29 @@ export default function GamePage() {
         </p>
       </div>
 
-      <div className="slot-machine" role="application" aria-label="Spillautomat - Sosialt spill uten pengepremier">
-        <div className="slot-machine__header">
-          <div className="slot-machine__score" aria-live="polite" aria-atomic="true">
-            <div className="slot-machine__score-label" id="score-label">
+      <div className="treasure-hunt" role="application" aria-label="Spillautomat - Sosialt spill uten pengepremier">
+        <div className="treasure-hunt__header">
+          <div className="treasure-hunt__score" aria-live="polite" aria-atomic="true">
+            <div className="treasure-hunt__score-label" id="score-label">
               POENG
             </div>
-            <div className="slot-machine__score-value" aria-labelledby="score-label">
+            <div className="treasure-hunt__score-value" aria-labelledby="score-label">
               {score}
             </div>
           </div>
 
-          <div className="slot-machine__bet-controls" role="group" aria-label="Energikontroller">
+          <div className="treasure-hunt__bet-controls" role="group" aria-label="Energikontroller">
             <button
-              className="slot-machine__bet-button slot-machine__bet-button--decrease"
+              className="treasure-hunt__bet-button treasure-hunt__bet-button--decrease"
               onClick={decreaseEnergy}
-              disabled={spinning}
+              disabled={rotating}
               aria-label="Reduser energi"
-              aria-disabled={spinning}
+              aria-disabled={rotating}
             >
               -
             </button>
             <div
-              className="slot-machine__bet-value"
+              className="treasure-hunt__bet-value"
               aria-live="polite"
               aria-atomic="true"
               aria-label="Nåværende energi"
@@ -229,40 +222,40 @@ export default function GamePage() {
               {energy}
             </div>
             <button
-              className="slot-machine__bet-button slot-machine__bet-button--increase"
+              className="treasure-hunt__bet-button treasure-hunt__bet-button--increase"
               onClick={increaseEnergy}
-              disabled={spinning}
+              disabled={rotating}
               aria-label="Øk energi"
-              aria-disabled={spinning}
+              aria-disabled={rotating}
             >
               +
             </button>
           </div>
 
           <button
-            className={`slot-machine__spin-button ${spinning ? "slot-machine__spin-button--spinning" : ""}`}
-            onClick={spin}
-            disabled={spinning || score < energy}
-            aria-label={spinning ? "Spinner..." : "Spinn hjulene"}
-            aria-disabled={spinning || score < energy}
+            className={`treasure-hunt__play-button ${rotating ? "treasure-hunt__play-button--rotating" : ""}`}
+            onClick={play}
+            disabled={rotating || score < energy}
+            aria-label={rotating ? "Roterer..." : "Start spillet"}
+            aria-disabled={rotating || score < energy}
           >
-            {spinning ? "..." : "SPILL"}
+            {rotating ? "..." : "SPILL"}
           </button>
         </div>
 
-        <div className="slot-machine__grid" role="grid" aria-label="Spillautomat-hjul" aria-live="polite">
+        <div className="treasure-hunt__grid" role="grid" aria-label="Spillautomat-hjul" aria-live="polite">
           {revealedGrid.map((row, rowIndex) => (
-            <div key={`row-${rowIndex}`} className="slot-machine__row" role="row" aria-label={`Rad ${rowIndex + 1}`}>
+            <div key={`row-${rowIndex}`} className="treasure-hunt__row" role="row" aria-label={`Rad ${rowIndex + 1}`}>
               {row.map((symbol, colIndex) => (
                 <div
                   key={`cell-${rowIndex}-${colIndex}`}
-                  className={`slot-machine__cell ${spinningColumns[colIndex] ? "slot-machine__cell--spinning" : ""}`}
+                  className={`treasure-hunt__cell ${rotatingColumns[colIndex] ? "treasure-hunt__cell--rotating" : ""}`}
                   role="gridcell"
-                  aria-label={spinningColumns[colIndex] ? "Spinner" : `Symbol: ${symbol}`}
+                  aria-label={rotatingColumns[colIndex] ? "Roterer" : `Symbol: ${symbol}`}
                 >
-                  <div className="slot-machine__symbol">
-                    {spinningColumns[colIndex] ? (
-                      <SpinningAnimation size={80} />
+                  <div className="treasure-hunt__symbol">
+                    {rotatingColumns[colIndex] ? (
+                      <RotatingAnimation size={80} />
                     ) : (
                       renderSymbol(
                         symbol,
@@ -278,16 +271,16 @@ export default function GamePage() {
 
         {totalPoints > 0 && (
           <div
-            className="slot-machine__match-message"
+            className="treasure-hunt__match-message"
             role="alert"
             aria-live="assertive"
             aria-label="Poeng informasjon - Kun for underholdning, ingen reell verdi"
           >
-            <div className="slot-machine__match-title">Poeng: {totalPoints}</div>
-            <div className="slot-machine__match-details">
+            <div className="treasure-hunt__match-title">Poeng: {totalPoints}</div>
+            <div className="treasure-hunt__match-details">
               {matches.map((match, index) => (
-                <div key={`match-${index}`} className="slot-machine__match-item">
-                  <div className="slot-machine__match-symbol">{renderSymbol(match.symbol, true, 30)}</div>
+                <div key={`match-${index}`} className="treasure-hunt__match-item">
+                  <div className="treasure-hunt__match-symbol">{renderSymbol(match.symbol, true, 30)}</div>
                   {match.count}x (x{match.multiplier}) = {match.points}
                 </div>
               ))}
@@ -295,19 +288,19 @@ export default function GamePage() {
           </div>
         )}
 
-        <div className="slot-machine__paytable" aria-label="Poengtabell - Viser symboler og deres verdier">
-          <h3 className="slot-machine__paytable-title" id="paytable-title">
+        <div className="treasure-hunt__paytable" aria-label="Poengtabell - Viser symboler og deres verdier">
+          <h3 className="treasure-hunt__paytable-title" id="paytable-title">
             POENGTABELL
           </h3>
-          <div className="slot-machine__paytable-items" aria-labelledby="paytable-title">
+          <div className="treasure-hunt__paytable-items" aria-labelledby="paytable-title">
             {symbols.map((symbol) => (
               <div
                 key={symbol.id}
-                className="slot-machine__paytable-item"
+                className="treasure-hunt__paytable-item"
                 aria-label={`${symbol.id} symbol gir ${symbol.value} ganger energi i poeng`}
               >
-                <div className="slot-machine__paytable-symbol">{renderSymbol(symbol.id, false, 40)}</div>
-                <div className="slot-machine__paytable-multiplier">x{symbol.value}</div>
+                <div className="treasure-hunt__paytable-symbol">{renderSymbol(symbol.id, false, 40)}</div>
+                <div className="treasure-hunt__paytable-multiplier">x{symbol.value}</div>
               </div>
             ))}
           </div>
